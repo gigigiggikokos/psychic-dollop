@@ -1,0 +1,38 @@
+name: Build calc.cpp (Windows & macOS)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build calc.exe
+        run: g++ calc.cpp -o calc.exe
+      - name: Upload exe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: calc-windows
+          path: calc.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build calc (macOS)
+        run: g++ calc.cpp -o calc
+      - name: Make mac app bundle (optional)
+        run: |
+          mkdir -p Calc.app/Contents/MacOS
+          mv calc Calc.app/Contents/MacOS/
+      - name: Upload mac artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: calc-macos
+          path: |
+            Calc.app
