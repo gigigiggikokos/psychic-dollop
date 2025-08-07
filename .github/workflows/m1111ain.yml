@@ -1,0 +1,44 @@
+name: Build calc.cpp
+
+on:
+  push:
+    paths:
+      - 'calc.cpp'
+      - '.github/workflows/build-calc.yml'
+  pull_request:
+    paths:
+      - 'calc.cpp'
+      - '.github/workflows/build-calc.yml'
+
+jobs:
+  build-windows:
+    name: Build for Windows (exe)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install MinGW
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          version: 12.2.0
+      - name: Compile calc.cpp to calc.exe
+        run: |
+          g++ calc.cpp -o calc.exe
+      - name: Upload Windows binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: calc-windows
+          path: calc.exe
+
+  build-macos:
+    name: Build for macOS (Monterey)
+    runs-on: macos-12  # macos-12 соответствует Monterey
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile calc.cpp for macOS
+        run: |
+          clang++ calc.cpp -o calc-macos
+      - name: Upload macOS binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: calc-macos
+          path: calc-macos
